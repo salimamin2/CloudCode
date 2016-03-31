@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>title</title>
+
+    <script type="text/javascript" src="/javascripts/jquery.js"></script>
+
+    <script type="text/javascript" src="/javascripts/jquery.ui.all.js"></script>
+    <script type="text/javascript" src="/javascripts/jquery.layout.js"></script>
+
+<!--
+
+-->
+    <link rel='stylesheet' href='/stylesheets/easyui.css' />
+    <link rel='stylesheet' href='/stylesheets/icon.css' />
+    <link rel='stylesheet' href='/stylesheets/cloudEdit.min.css' />
+    <script src='/socket.io/socket.io.js'></script>
+    <script src="/js/jquery.session.js"></script>
+       
+
+    <script type="text/javascript">
+
+    
+    
+    var myLayout; // a var is required because this page utilizes: myLayout.allowOverflow() method
+
+    $(document).ready(function () {
+      myLayout = $('body').layout({
+        north__spacing_open:  0, 
+        north__size:       35 , 
+        
+        south__onresize: function () {
+            //alert('only when south layout is redrawn') 
+          },      
+        // enable showOverflow on west-pane so popups will overlap north pane
+        west__showOverflowOnHover: true
+      });
+        var ip = $.session.get('ip');
+        console.log(ip);
+        var urlPath='http://localhost:3000/index.html?username=ubuntu&host=' +ip;
+        $("#frame").html('"<iframe width="100%" height="100%" frameborder="0" src="' +urlPath+ '"></iframe>"');
+        //document.getElementbyId("frame").innerHTML  += "HeeloWorld";
+        alert("Success");
+        
+        // var urlPath='http://localhost:3000/index.html';
+        // var node = document.getElementbyId("frame");
+        // node.innerHTML = "<iframe id="frame" width="100%" height="100%" frameborder="0" src='"+ urlPath + "'></iframe>";
+    });
+
+ //    $(document).ready(function() 
+ //    {
+ //      // $('#reset-form').on('click', function()
+ //      // {
+ //      //     $("#my-form").trigger("reset");
+ //      // });
+
+ //      $('#clear').on('click', function()
+ //      { 
+ //          // $('#editor').val('');
+ //          $('.ui-layout-center').find('textarea').val('');
+          
+ //       });
+    
+ // });
+// $(document).ready(function() {
+
+//   $('#clear').click(function() {
+//       $('.').find('textarea[class:ace_content]').val('');
+//     });
+//   });
+   
+  // var queryString = location.search.substring(1); 
+  // alert(queryString);
+  </script>    
+
+  <style type="text/css">
+  /**
+   *  Basic Layout Theme
+   * 
+   *  This theme uses the default layout class-names for all classes
+   *  Add any 'custom class-names', from options: paneClass, resizerClass, togglerClass
+   */
+
+  .ui-layout-pane { /* all 'panes' */ 
+    background: #FFF; 
+    border: 1px solid #BBB; 
+    /*padding: 10px;*/ 
+    overflow: auto;
+  } 
+
+  .ui-layout-resizer { /* all 'resizer-bars' */ 
+    background: #DDD; 
+  } 
+
+  .ui-layout-toggler { /* all 'toggler-buttons' */ 
+    background: #AAA; 
+  } 
+
+
+  </style>
+
+
+  <style type="text/css">
+  /**
+   *  ALL CSS below is only for cosmetic and demo purposes
+   *  Nothing here affects the appearance of the layout
+   */
+
+
+  
+  #editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+  </style>
+
+  </head>
+  <body>
+
+<!-- allowOverflow auto-attached by option: west__showOverflowOnHover = true -->
+<div class="ui-layout-north ">
+  
+    <div class="btnGroup last">
+
+        <button title="Enlarge Preview" id="previewToggle" class="btn">New</button>
+        <button title="Click to clear all panes" id="clear" onClick="" class="btn">Clear</button>
+        <button title="Download to computer" id="download" class="btn">Download</button>
+        <button title="Save to localStorage" id="btnsave" class="btn">Save</button>
+        <button title="Load from localStorage" id="load" class="btn">Load</button>
+        <button title="Run..." id="run" class="btn">Run</button>
+    </div>
+
+
+</div>
+
+
+
+<div class="ui-layout-west">
+
+<div id="lblfile" style="display:none;"></div>
+<div id="addparam" style="display:none;"></div>
+<ul id="tt" class="easyui-tree" style="position:relative;"></ul>
+
+
+
+
+
+</div>
+
+<div id="frame" class="ui-layout-south">
+  <!-- <iframe id="frame" onload="test()"; width="100%" height="100%" frameborder="0" ></iframe> -->
+</div>
+
+<div id="center" class="ui-layout-center">
+<pre id="editor"></pre>
+
+</div>
+<script type="text/javascript" src="/javascripts/src-noconflict/ace.js"  charset="utf-8"></script>
+
+<script type="text/javascript" src="/javascripts/jquery-1.11.3.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.easyui.min.js"></script>
+<script src='/socket.io/socket.io.js'></script>
+<script type="text/javascript">
+
+
+   
+
+
+var jq = jQuery.noConflict();  
+
+    
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/textmate");
+      editor.session.setMode("ace/mode/c_cpp");
+      editor.$blockScrolling = Infinity;
+      editor.setOptions({
+        fontSize: "13px", 
+        maxLines: Infinity
+      });
+
+      
+    jq("#btnsave").click(function(){
+      //alert("Save Clicked");
+
+          var content = editor.session.getValue();
+          var filename = jq("#lblfile").text();
+        jq.ajax({
+          url: "/write",
+          type: "POST",
+          data: { name: filename, data:content}
+        }).done(function( content ) {
+            alert( content );
+
+          //console.log(content);
+          //$(".my-code-area").data( "ace" ).editor.ace.setValue( content, -1 );
+        });   
+
+    });
+
+    // $('#download').on('click',function(){
+    //         var fileName = jq("#lblfile").text();
+    //         console.log(fileName)
+    //         alert(fileName);
+    //         // var temp = {"file" : fileName}
+    //         // console.log(temp);
+    //         // console.log(JSON.stringify(temp))
+    //         // $.ajax({
+    //         //     url: '/download-cv-file',
+    //         //     type: 'POST',
+    //         //     data: {fileSend:JSON.stringify(temp)},
+    //         //     dataType: 'json'
+    //         // });
+    //     });
+
+    jq("#clear").click(function(){
+      //alert("Save Clicked");
+
+          var content = editor.session.getValue();
+          content = " ";
+        //   var filename = jq("#lblfile").text();
+        // jq.ajax({
+        //   url: "/write",
+        //   type: "POST",
+        //   data: { name: filename, data:content}
+        // }).done(function( content ) {
+        //     alert( content );
+
+          //console.log(content);
+          // $(".ace_text-input").data( "ace" ).editor.ace.setValue(content);
+        
+    });
+
+    jq('#previewToggle').click(function(){
+        //var filename = jq("#lblfile").text();
+        var content = editor.session.getValue();
+        var filename = "Salim"//jq("#lblfile").text();
+      jq.ajax({
+                type: 'POST',
+                url: '/new',
+                data: { name: filename, data:content}
+            }).done(function(content){
+              console.log(content)
+              alert(content);
+              maketree();
+            });
+    
+          });
+    
+    // jq('#clear').click(function(){
+    //     //var filename = jq("#lblfile").text();
+    //     var content = editor.session.getValue();
+    //     var filename = jq("#lblfile").text();
+    //   jq.ajax({
+    //             type: 'POST',
+    //             url: '/clear',
+    //             data: { name: filename, data:content}
+    //         }).done(function(content){
+    //           console.log(content)
+    //           alert(content);
+              
+    //         });
+    
+    //     });
+
+    jq('#download').click(function(){
+        //var filename = jq("#lblfile").text();
+        var content = editor.session.getValue();
+        var filename = jq("#lblfile").text();
+      jq.ajax({
+                type: 'GET',
+                url: '/download',
+                data: { name: filename, data:content}
+            }).done(function(content){
+              console.log(content);
+              
+            });
+    
+        });
+     
+
+      // $.post('/new');
+
+
+    // jq('#previewToggle').click(function() {
+
+    //     var filename = jq("#lblfile").text();
+    //   jq.ajax({
+    //     // Assuming an endpoint here that responds to GETs with a date.
+    //     url: '/new',
+    //     type: 'POST',
+    //     data: { name: filename }
+    // });  
+
+    
+   
+      jq('#tt').tree({
+          method: 'get',
+          url: '/files',
+          lines: true, 
+          onClick: function(node){
+            jq("#lblfile").text(node.text);
+          }, 
+          onDblClick: function(node){
+              jq("#lblfile").text(node.text);
+              jq("#addparam").text(node.attributes.path+"/"+node.text);
+              console.log(node.text);  // alert node text property when clicked
+
+              var filename = node.text;
+
+              jq.ajax({
+                url: "/read",
+                type: "GET",
+                data: { name: filename}
+              }).done(function( content ) {
+                console.log(content);
+                editor.session.setValue( content );
+              });         
+        },
+          onBeforeExpand: function(node){
+          //alert(node.text);  // alert node text property when clicked
+          jq("#addparam").text(node.attributes.path+"/"+node.text);
+        }, 
+        onBeforeLoad: function (node,param) { 
+          //alert(node.text);
+          param.filename=$("#addparam").text(); 
+          return true;
+        }
+
+      });
+ //maketree(); 
+
+
+</script>
+
+  </body>
+</html>

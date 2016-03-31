@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+	<title>Simple Layout Demo</title>
+
+	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="jquery.ui.all.js"></script>
+	<script type="text/javascript" src="jquery.layout.js"></script>
+
+	<script type="text/javascript" src="js/complex.js"></script>
+
+	<script type="text/javascript">
+
+	var myLayout; // a var is required because this page utilizes: myLayout.allowOverflow() method
+
+	$(document).ready(function () {
+		myLayout = $('body').layout({
+			
+			south__onresize: function () {
+		    	//alert('only when south layout is redrawn') 
+		    },			
+			// enable showOverflow on west-pane so popups will overlap north pane
+			west__showOverflowOnHover: true
+		});
+ 	});
+
+	</script>
+
+
+	<style type="text/css">
+	/**
+	 *	Basic Layout Theme
+	 * 
+	 *	This theme uses the default layout class-names for all classes
+	 *	Add any 'custom class-names', from options: paneClass, resizerClass, togglerClass
+	 */
+
+	.ui-layout-pane { /* all 'panes' */ 
+		background: #FFF; 
+		border: 1px solid #BBB; 
+		/*padding: 10px;*/ 
+		overflow: auto;
+	} 
+
+	.ui-layout-resizer { /* all 'resizer-bars' */ 
+		background: #DDD; 
+	} 
+
+	.ui-layout-toggler { /* all 'toggler-buttons' */ 
+		background: #AAA; 
+	} 
+
+
+	</style>
+
+
+	<style type="text/css">
+	/**
+	 *	ALL CSS below is only for cosmetic and demo purposes
+	 *	Nothing here affects the appearance of the layout
+	 */
+
+	body {
+		font-family: Arial, sans-serif;
+		font-size: 0.85em;
+	}
+	p {
+		margin: 1em 0;
+	}
+
+	/*
+	 *	Rules below are for simulated drop-down/pop-up lists
+	 */
+
+	ul {
+		/* rules common to BOTH inner and outer UL */
+		z-index:	100000;
+		margin:		1ex 0;
+		padding:	0;
+		list-style:	none;
+		cursor:		pointer;
+		border:		1px solid Black;
+		/* rules for outer UL only */
+		width:		15ex;
+		position:	relative;
+	}
+	ul li {
+		background-color: #EEE;
+		padding: 0.15em 1em 0.3em 5px;
+	}
+	ul ul {
+		display:	none;
+		position:	absolute;
+		width:		100%;
+		left:		-1px;
+		/* Pop-Up */
+		bottom:		0;
+		margin:		0;
+		margin-bottom: 1.55em;
+	}
+	.ui-layout-north ul ul {
+		/* Drop-Down */
+		bottom:		auto;
+		margin:		0;
+		margin-top:	1.45em;
+	}
+	.ui-layout-south{
+		overflow: hidden;
+	}
+	ul ul li		{ padding: 3px 1em 3px 5px; }
+	ul ul li:hover	{ background-color: #FF9; }
+	ul li:hover ul	{ display:	block; background-color: #EEE; }
+	
+	#editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+	</style>
+
+</head>
+<body>
+
+
+
+<!-- allowOverflow auto-attached by option: west__showOverflowOnHover = true -->
+<div class="ui-layout-west">
+	This is the west pane, closable, slidable and resizable
+
+	<ul>
+		<li>
+			<ul>
+				<li>one</li>
+				<li>two</li>
+				<li>three</li>
+				<li>four</li>
+				<li>five</li>
+			</ul>
+			Pop-Up <!-- put this below so IE and FF render the same! -->
+		</li>
+	</ul>
+
+	<p><button onclick="myLayout.close('west')">Close Me</button></p>
+
+	<p><a href="#" onClick="showOptions(myLayout,'defaults.fxSettings_open');showOptions(myLayout,'west.fxSettings_close')">Show Options.Defaults</a></p>
+
+</div>
+
+<div class="ui-layout-south">
+	<iframe src="http://192.168.0.104:3000/index.html?username=root&host=10.0.3.75" width="100%" height="100%" frameborder="0" ></iframe>
+</div>
+
+<div class="ui-layout-center">
+	<pre id="editor">function foo(items) {
+	    var i;
+	    for (i = 0; i &lt; items.length; i++) {
+	        alert("Ace Rocks " + items[i]);
+	    }
+	}</pre>
+
+	<script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+	    var editor = ace.edit("editor");
+	    editor.setTheme("ace/theme/textmate");
+	    editor.session.setMode("ace/mode/javascript");
+	    editor.setOptions({
+		  fontSize: "14px"
+		});
+	</script>
+</div>
+
+</body>
+</html>

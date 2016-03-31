@@ -1,0 +1,46 @@
+<!doctype html>
+<title>tty.js</title>
+<link rel="stylesheet" href="style.css">
+
+
+<!-- <div id="help">
+  <p>Click the titlebar to drag.</p>
+  <p>Double-click titlebar to maximize.</p>
+  <p>Click the lower-right corner to resize.</p>
+  <p>Click the tilde to open a new tab.</p>
+  <p>Click the tilde with a modifier to close the window.</p>
+</div> -->
+
+
+<button id="open" style="display:none">Open Terminal</button>
+<!-- <button id="lights">Light Switch</button> -->
+
+<script src="socket.io/socket.io.js"></script>
+<script src="term.js"></script>
+<script src="options.js"></script>
+<script src="tty.js"></script>
+<script src="jquery.min.js"></script>
+<script type="text/javascript">
+
+
+
+//$("#open").click();
+//document.write(tty.windows.length);
+
+	setTimeout(transition, 1000);
+
+    function transition() {
+    	if($(".window").length != 1){
+    		$("#open").click();
+    		setTimeout(transition, 1000);
+    		console.log($(".window").length == 1)
+    	}else{
+    		console.log($(".window").length == 1)	
+    		tty.windows[0].maximize();
+    	}
+    }
+
+ 
+
+
+</script>
